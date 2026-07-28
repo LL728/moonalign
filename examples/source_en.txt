@@ -1,0 +1,5 @@
+MoonBit is designed for the AI era.
+It values predictable tooling and maintainable code.
+
+MoonAlign helps build bilingual corpora from messy source documents.
+It prefers transparent heuristics over opaque magic.
