@@ -1,0 +1,91 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "LL728/moonalign"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn align(String, String, options? : AlignOptions) -> AlignmentReport
+
+pub fn align_texts(String, String, options? : AlignOptions) -> AlignmentReport
+
+pub fn align_units(Array[TextUnit], Array[TextUnit], options? : AlignOptions) -> AlignmentReport
+
+pub fn align_with_mode(String, String, mode? : SegmentMode) -> AlignmentReport
+
+pub fn default_options() -> AlignOptions
+
+pub fn normalize_text(String) -> String
+
+pub fn options_to_json(AlignOptions) -> Json
+
+pub fn paragraph_mode() -> SegmentMode
+
+pub fn report_to_json_string(AlignmentReport, indent? : Int) -> String
+
+pub fn report_to_tsv(AlignmentReport) -> String
+
+pub fn segment_text(String, options? : AlignOptions) -> Array[TextUnit]
+
+pub fn sentence_mode() -> SegmentMode
+
+pub fn with_segment_mode(AlignOptions, SegmentMode) -> AlignOptions
+
+// Errors
+
+// Types and methods
+pub struct AlignOptions {
+  segment_mode : SegmentMode
+  max_fan_out : Int
+  join_penalty : Double
+  deviation_penalty : Double
+  min_sentence_chars : Int
+  preserve_paragraphs : Bool
+} derive(@debug.Debug)
+
+pub struct AlignmentPair {
+  source_start : Int
+  source_end : Int
+  target_start : Int
+  target_end : Int
+  source_text : String
+  target_text : String
+  source_char_weight : Double
+  target_char_weight : Double
+  source_tokens : Int
+  target_tokens : Int
+  score : Double
+  move_kind : String
+} derive(ToJson, @debug.Debug)
+
+pub struct AlignmentReport {
+  options : Json
+  source_count : Int
+  target_count : Int
+  estimated_ratio : Double
+  warnings : Array[String]
+  pairs : Array[AlignmentPair]
+} derive(ToJson, @debug.Debug)
+
+type BackPointer derive(Eq, @debug.Debug)
+
+pub enum SegmentMode {
+  Paragraph
+  Sentence
+} derive(Eq, @debug.Debug)
+
+pub struct TextUnit {
+  id : Int
+  paragraph_index : Int
+  sentence_index : Int
+  text : String
+  normalized : String
+  char_weight : Double
+  token_count : Int
+} derive(ToJson, @debug.Debug)
+
+// Type aliases
+
+// Traits
+
