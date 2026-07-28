@@ -1,0 +1,85 @@
+name: Check and Test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  check:
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install MoonBit (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Install MoonBit (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+          irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
+          "C:\Users\runneradmin\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+
+      - name: Install native toolchain
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc
+
+      - name: Install native toolchain (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install gcc || true
+
+      - name: Install native toolchain (Windows)
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+
+      - name: Toolchain info
+        run: |
+          moon version --all
+          moon update
+
+      - name: Formatting
+        run: |
+          moon fmt --check --sort-input
+
+      - name: Cross-target typecheck
+        run: |
+          moon check --target all --deny-warn
+
+      - name: Tests
+        run: |
+          moon test --target wasm-gc --deny-warn
+
+      - name: Public API generation
+        run: |
+          moon info
+          git diff --exit-code
+
+      - name: CLI smoke test
+        run: |
+          moon run cmd/main -- --source-text "MoonAlign builds corpora." --target-text "MoonAlign 构建语料。" --format json
