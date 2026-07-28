@@ -1,0 +1,6 @@
+import {
+  "LL728/moonalign",
+  "moonbitlang/core/env",
+}
+
+pkgtype(kind: "executable")
