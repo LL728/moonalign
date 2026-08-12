@@ -75,6 +75,12 @@ jobs:
         run: |
           moon test --target wasm-gc --deny-warn
 
+      - name: Benchmark regression
+        run: |
+          moon run --target wasm-gc cmd/main -- --benchmark > benchmark.json
+          test -s benchmark.json
+          grep -q 'tatoeba-eng-cmn-short' benchmark.json
+
       - name: Public API generation
         run: |
           moon info

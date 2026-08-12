@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Added `AlignmentMetrics`, `GoldPair`, and `evaluate` for reproducible gold-set evaluation.
+- Added an offline benchmark suite and a Tatoeba English-Mandarin sample with sentence IDs and attribution.
+- Added `--benchmark` CLI output for precision, recall, F1, coverage, merge counts, and average alignment score.
+- Migrated the CLI package metadata to the MoonBit 0.10.3 `options("is-main": true)` format and removed an unused dependency.
+
 ## 0.1.0
 
 - Initialized the MoonAlign module and CLI entrypoint.

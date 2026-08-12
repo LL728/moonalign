@@ -24,6 +24,16 @@ This repository does **not** embed or redistribute papers, corpora, or third-par
 
 These example texts are handwritten demonstration snippets for this repository, not imported benchmark corpora.
 
+The reviewable benchmark sample in `benchmarks/tatoeba-eng-cmn.tsv` is
+different: it contains Tatoeba sentence IDs, English-Mandarin text, and an
+explicit `CC BY 2.0 FR` attribution. Its query URL, license deed, and
+curation date are recorded in `benchmarks/README.md`. The executable suite
+embeds a compact copy so CI does not depend on network access.
+
 ## License note
 
-The repository is released under Apache-2.0. If future versions add dictionaries, corpora, or benchmark fixtures, each new asset should carry an explicit source and license note before release.
+The repository is released under Apache-2.0. The Tatoeba rows remain under
+their stated source license; downstream redistribution must preserve the
+attribution. If future versions add dictionaries, corpora, or benchmark
+fixtures, each new asset should carry an explicit source and license note
+before release.

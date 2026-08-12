@@ -14,7 +14,19 @@ pub fn align_units(Array[TextUnit], Array[TextUnit], options? : AlignOptions) ->
 
 pub fn align_with_mode(String, String, mode? : SegmentMode) -> AlignmentReport
 
+pub fn benchmark_case(BenchmarkCase) -> BenchmarkResult
+
+pub fn benchmark_cases() -> Array[BenchmarkCase]
+
+pub fn benchmark_suite() -> Array[BenchmarkResult]
+
+pub fn benchmark_to_json_string(indent? : Int) -> String
+
 pub fn default_options() -> AlignOptions
+
+pub fn evaluate(AlignmentReport, Array[GoldPair]) -> AlignmentMetrics
+
+pub fn gold_pair(source_start~ : Int, source_end~ : Int, target_start~ : Int, target_end~ : Int) -> GoldPair
 
 pub fn normalize_text(String) -> String
 
@@ -30,6 +42,12 @@ pub fn segment_text(String, options? : AlignOptions) -> Array[TextUnit]
 
 pub fn sentence_mode() -> SegmentMode
 
+pub fn with_max_fan_out(AlignOptions, Int) -> AlignOptions
+
+pub fn with_min_sentence_chars(AlignOptions, Int) -> AlignOptions
+
+pub fn with_preserve_paragraphs(AlignOptions, Bool) -> AlignOptions
+
 pub fn with_segment_mode(AlignOptions, SegmentMode) -> AlignOptions
 
 // Errors
@@ -43,6 +61,19 @@ pub struct AlignOptions {
   min_sentence_chars : Int
   preserve_paragraphs : Bool
 } derive(@debug.Debug)
+
+pub struct AlignmentMetrics {
+  predicted_pairs : Int
+  gold_pairs : Int
+  exact_pairs : Int
+  precision : Double
+  recall : Double
+  f1 : Double
+  source_coverage : Double
+  target_coverage : Double
+  merged_pairs : Int
+  average_score : Double
+} derive(ToJson, @debug.Debug)
 
 pub struct AlignmentPair {
   source_start : Int
@@ -69,6 +100,28 @@ pub struct AlignmentReport {
 } derive(ToJson, @debug.Debug)
 
 type BackPointer derive(Eq, @debug.Debug)
+
+pub struct BenchmarkCase {
+  name : String
+  source : String
+  target : String
+  gold_pairs : Array[GoldPair]
+  source_url : String
+  license : String
+} derive(ToJson, @debug.Debug)
+
+pub struct BenchmarkResult {
+  name : String
+  metrics : AlignmentMetrics
+  warnings : Array[String]
+} derive(ToJson, @debug.Debug)
+
+pub struct GoldPair {
+  source_start : Int
+  source_end : Int
+  target_start : Int
+  target_end : Int
+} derive(Eq, ToJson, @debug.Debug)
 
 pub enum SegmentMode {
   Paragraph

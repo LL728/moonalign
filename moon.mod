@@ -24,7 +24,3 @@ keywords = [ "alignment", "bilingual", "nlp", "translation", "corpus" ]
 preferred_target = "wasm-gc"
 
 description = "A MoonBit-native bilingual paragraph and sentence alignment toolkit with dynamic-programming based matching and a practical CLI."
-
-import {
-  "moonbitlang/x@0.4.47",
-}

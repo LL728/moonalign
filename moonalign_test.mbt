@@ -59,3 +59,42 @@ test "tsv formatter includes header and move kinds" {
   assert_true(tsv.contains("source_start"))
   assert_true(tsv.contains("1-1"))
 }
+
+///|
+test "fan out limit and paragraph guard are safe" {
+  let no_merge = @moonalign.with_max_fan_out(@moonalign.default_options(), 1)
+  let report = @moonalign.align(
+    "One.\nTwo.\n",
+    "合并后的目标句。",
+    options=no_merge,
+  )
+  assert_eq(report.pairs.length(), 0)
+  let preserve = @moonalign.with_preserve_paragraphs(
+    @moonalign.default_options(),
+    true,
+  )
+  let guarded = @moonalign.align(
+    "A.\n\nB.\n",
+    "甲。\n\n乙。\n",
+    options=preserve,
+  )
+  assert_eq(guarded.pairs.length(), 2)
+}
+
+///|
+test "long sentence streams keep complete coverage" {
+  let source_builder = StringBuilder()
+  let target_builder = StringBuilder()
+  for i in 0..<32 {
+    source_builder.write_string("Item \{i}.\n")
+    target_builder.write_string("项目 \{i}。\n")
+  }
+  let report = @moonalign.align(
+    source_builder.to_string(),
+    target_builder.to_string(),
+  )
+  assert_eq(report.source_count, 32)
+  assert_eq(report.target_count, 32)
+  assert_eq(report.pairs.length(), 32)
+  assert_eq(report.warnings.length(), 0)
+}

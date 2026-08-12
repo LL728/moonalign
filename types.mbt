@@ -52,6 +52,55 @@ pub struct AlignmentReport {
 } derive(Debug, ToJson)
 
 ///|
+pub struct GoldPair {
+  source_start : Int
+  source_end : Int
+  target_start : Int
+  target_end : Int
+} derive(Debug, Eq, ToJson)
+
+///|
+pub fn gold_pair(
+  source_start~ : Int,
+  source_end~ : Int,
+  target_start~ : Int,
+  target_end~ : Int,
+) -> GoldPair {
+  { source_start, source_end, target_start, target_end }
+}
+
+///|
+pub struct AlignmentMetrics {
+  predicted_pairs : Int
+  gold_pairs : Int
+  exact_pairs : Int
+  precision : Double
+  recall : Double
+  f1 : Double
+  source_coverage : Double
+  target_coverage : Double
+  merged_pairs : Int
+  average_score : Double
+} derive(Debug, ToJson)
+
+///|
+pub struct BenchmarkCase {
+  name : String
+  source : String
+  target : String
+  gold_pairs : Array[GoldPair]
+  source_url : String
+  license : String
+} derive(Debug, ToJson)
+
+///|
+pub struct BenchmarkResult {
+  name : String
+  metrics : AlignmentMetrics
+  warnings : Array[String]
+} derive(Debug, ToJson)
+
+///|
 struct BackPointer {
   prev_i : Int
   prev_j : Int
@@ -89,6 +138,37 @@ pub fn with_segment_mode(
   mode : SegmentMode,
 ) -> AlignOptions {
   { ..options, segment_mode: mode }
+}
+
+///|
+pub fn with_max_fan_out(
+  options : AlignOptions,
+  max_fan_out : Int,
+) -> AlignOptions {
+  { ..options, max_fan_out: if max_fan_out < 1 { 1 } else { max_fan_out } }
+}
+
+///|
+pub fn with_min_sentence_chars(
+  options : AlignOptions,
+  min_sentence_chars : Int,
+) -> AlignOptions {
+  {
+    ..options,
+    min_sentence_chars: if min_sentence_chars < 1 {
+      1
+    } else {
+      min_sentence_chars
+    },
+  }
+}
+
+///|
+pub fn with_preserve_paragraphs(
+  options : AlignOptions,
+  preserve : Bool,
+) -> AlignOptions {
+  { ..options, preserve_paragraphs: preserve }
 }
 
 ///|

@@ -11,6 +11,7 @@ fn print_help() -> Unit {
     #|  --target-text     Target-language plain text
     #|  --mode <name>     sentence (default) or paragraph
     #|  --format <name>   json (default) or tsv
+    #|  --benchmark       Run the built-in reproducible benchmark suite
     #|  --help            Show this message
   println(text)
 }
@@ -33,6 +34,9 @@ fn parse_args(args : Array[String]) -> Map[String, String] {
     if current == "--help" {
       parsed["help"] = "true"
       i += 1
+    } else if current == "--benchmark" {
+      parsed["benchmark"] = "true"
+      i += 1
     } else if current.has_prefix("--") && i + 1 < args.length() {
       parsed[current.strip_prefix("--").unwrap().to_owned()] = args[i + 1]
       i += 2
@@ -48,6 +52,10 @@ fn main {
   let argv = @env.args()
   let args = if argv.length() > 0 { argv[1:].to_owned() } else { [] }
   let parsed = parse_args(args)
+  if parsed.contains("benchmark") {
+    println(@moonalign.benchmark_to_json_string())
+    return
+  }
   if parsed.contains("help") ||
     !parsed.contains("source-text") ||
     !parsed.contains("target-text") {
