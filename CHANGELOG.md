@@ -8,6 +8,7 @@
 - Added length distributions, paragraph histograms, repeated-unit detection, and text profiles.
 - Added 700 semantic boundary regression cases covering empty, Unicode, punctuation, whitespace, CRLF, URL, numeric, paragraph, and length-ratio inputs.
 - Updated CI for current stable MoonBit, all-backend checks, native tests, public API drift checks, benchmark regression, and CLI smoke testing.
+- Added a 210-dimensional alignment feature vector and a 210-dimensional text-unit feature vector for downstream ranking and calibration experiments.
 
 ## Unreleased
 

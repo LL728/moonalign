@@ -86,3 +86,17 @@ test "synthetic corpus has bounded construction" {
   assert_eq(synthetic_corpus(4).length(), 4)
   assert_eq(synthetic_corpus(2000).length(), 1000)
 }
+
+///|
+test "feature vectors are stable and exportable" {
+  let report = align("MoonAlign builds corpora.", "MoonAlign 构建语料。")
+  let pair = report.pairs[0]
+  let source = segment_text("MoonAlign builds corpora.")[0]
+  let alignment_features = alignment_feature_vector(pair)
+  let text_features = text_feature_vector(source)
+  assert_eq(alignment_features.length(), 210)
+  assert_eq(text_features.length(), 210)
+  assert_true(alignment_feature_mean(pair) >= 0.0)
+  assert_true(text_feature_peak(source) >= 0.0)
+  assert_true(feature_vector_to_csv(alignment_features).contains(","))
+}

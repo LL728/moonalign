@@ -20,6 +20,10 @@ pub fn align_units(Array[TextUnit], Array[TextUnit], options? : AlignOptions) ->
 
 pub fn align_with_mode(String, String, mode? : SegmentMode) -> AlignmentReport
 
+pub fn alignment_feature_mean(AlignmentPair) -> Double
+
+pub fn alignment_feature_vector(AlignmentPair) -> Array[Double]
+
 pub fn anchor_bonus(AlignmentPair, Array[LexicalAnchor]) -> Double
 
 pub fn anchor_kind_counts(Array[LexicalAnchor]) -> Map[String, Int]
@@ -49,6 +53,8 @@ pub fn default_quality_gate() -> QualityGate
 pub fn evaluate(AlignmentReport, Array[GoldPair]) -> AlignmentMetrics
 
 pub fn extract_anchors(Array[TextUnit], options? : AnchorOptions) -> Array[LexicalAnchor]
+
+pub fn feature_vector_to_csv(Array[Double]) -> String
 
 pub fn gold_pair(source_start~ : Int, source_end~ : Int, target_start~ : Int, target_end~ : Int) -> GoldPair
 
@@ -109,6 +115,10 @@ pub fn stats_to_csv_row(String, LengthStats) -> String
 pub fn summarize_corpus(Array[CorpusResult]) -> CorpusSummary
 
 pub fn synthetic_corpus(Int) -> Array[CorpusDocument]
+
+pub fn text_feature_peak(TextUnit) -> Double
+
+pub fn text_feature_vector(TextUnit) -> Array[Double]
 
 pub fn text_profile(String, options? : AlignOptions) -> String
 

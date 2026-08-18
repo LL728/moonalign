@@ -25,7 +25,8 @@ MoonAlign 是一个面向双语平行语料构建的 MoonBit 工具包。它基�
 - 词法锚点：识别 URL、数字、标识符、共享词元并提供解释性证据
 - 批量语料 API：校验文档、批量对齐、质量汇总、TSV/CSV 导出和人工审校队列
 - 质量门禁：覆盖率、置信度、单调性、异常比例和问题数量可用于 CI
-- 9,800+ 行可审查 MoonBit 源码，包含 700 组边界回归测试
+- 约 7,000 行真实实现源码，另有 700 组边界回归测试
+- 210 维对齐特征和 210 维文本单元特征，可用于排序、校准和下游质量模型
 
 ## Quick Start
 
@@ -105,7 +106,7 @@ test "basic alignment" {
 
 ## Repository Notes
 
-- 主要 MoonBit 源码规模目前约 `9,813` 行（不含 `_build/` 与 `.mooncakes/`）。
+- 主要 MoonBit 实现源码规模目前约 `6,856` 行（不含测试、`_build/` 与 `.mooncakes/`）；测试源码另计约 `8,653` 行。
 - 公开接口通过 `moon info` 生成 `pkg.generated.mbti`，便于验收时审查 API 面。
 - 代码、示例文本、README 与测试全部由本仓库维护；基准样本单独标注了 Tatoeba 来源与许可证。
 - 详细来源与实现说明见 [SOURCES.md](SOURCES.md)。
