@@ -37,3 +37,12 @@ their stated source license; downstream redistribution must preserve the
 attribution. If future versions add dictionaries, corpora, or benchmark
 fixtures, each new asset should carry an explicit source and license note
 before release.
+
+## Acceptance data and reproducibility
+
+The acceptance release does not claim that the compact Tatoeba sample is a
+representative corpus. It is a real, attributed, offline benchmark fixture
+used to make regressions visible without network access. The merge-path case
+is a project-owned regression fixture. Runtime benchmark output is generated
+by `moon run --target wasm-gc cmd/main -- --benchmark`; the command is part of
+CI so a reviewer can reproduce the exact metrics from the checked-in data.

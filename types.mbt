@@ -101,6 +101,99 @@ pub struct BenchmarkResult {
 } derive(Debug, ToJson)
 
 ///|
+/// A lexical anchor found in both sides of a bilingual document.
+///
+/// Anchors are intentionally lightweight: they are useful for terminology,
+/// identifiers, URLs, numbers, and names without requiring a language model.
+pub struct LexicalAnchor {
+  source_unit : Int
+  target_unit : Int
+  source_text : String
+  target_text : String
+  normalized : String
+  kind : String
+  score : Double
+} derive(Debug, ToJson)
+
+///|
+/// A configurable set of deterministic anchor extraction rules.
+pub struct AnchorOptions {
+  min_token_length : Int
+  include_numbers : Bool
+  include_urls : Bool
+  include_identifiers : Bool
+  case_sensitive : Bool
+  max_anchors_per_unit : Int
+} derive(Debug)
+
+///|
+/// A document-level quality diagnostic.
+pub struct QualityIssue {
+  code : String
+  severity : String
+  message : String
+  source_unit : Int?
+  target_unit : Int?
+} derive(Debug, ToJson)
+
+///|
+/// Quality statistics suitable for CI regression checks.
+pub struct AlignmentQuality {
+  source_units : Int
+  target_units : Int
+  aligned_pairs : Int
+  exact_one_to_one : Int
+  merged_pairs : Int
+  anchored_pairs : Int
+  source_coverage : Double
+  target_coverage : Double
+  mean_confidence : Double
+  monotonicity : Double
+  score : Double
+  issues : Array[QualityIssue]
+} derive(Debug, ToJson)
+
+///|
+/// A named bilingual document in a batch.
+pub struct CorpusDocument {
+  id : String
+  source : String
+  target : String
+  metadata : Map[String, String]
+} derive(Debug)
+
+///|
+/// A batch alignment result with aggregate quality information.
+pub struct CorpusResult {
+  id : String
+  report : AlignmentReport
+  quality : AlignmentQuality
+} derive(Debug, ToJson)
+
+///|
+/// Aggregate statistics over a batch run.
+pub struct CorpusSummary {
+  document_count : Int
+  total_source_units : Int
+  total_target_units : Int
+  total_pairs : Int
+  mean_f1 : Double
+  mean_quality_score : Double
+  warning_count : Int
+  issue_count : Int
+} derive(Debug, ToJson)
+
+///|
+/// Thresholds used by automated quality gates.
+pub struct QualityGate {
+  min_source_coverage : Double
+  min_target_coverage : Double
+  min_mean_confidence : Double
+  min_quality_score : Double
+  max_warning_count : Int
+} derive(Debug)
+
+///|
 struct BackPointer {
   prev_i : Int
   prev_j : Int
@@ -186,4 +279,63 @@ pub fn options_to_json(options : AlignOptions) -> Json {
     "min_sentence_chars": Json::number(options.min_sentence_chars.to_double()),
     "preserve_paragraphs": Json::boolean(options.preserve_paragraphs),
   })
+}
+
+///|
+/// Return conservative defaults for lexical anchor extraction.
+pub fn default_anchor_options() -> AnchorOptions {
+  {
+    min_token_length: 3,
+    include_numbers: true,
+    include_urls: true,
+    include_identifiers: true,
+    case_sensitive: false,
+    max_anchors_per_unit: 8,
+  }
+}
+
+///|
+/// Return thresholds appropriate for human review queues.
+pub fn default_quality_gate() -> QualityGate {
+  {
+    min_source_coverage: 0.98,
+    min_target_coverage: 0.98,
+    min_mean_confidence: 0.45,
+    min_quality_score: 0.60,
+    max_warning_count: 3,
+  }
+}
+
+///|
+/// Create a corpus document without requiring a mutable metadata map.
+pub fn corpus_document(
+  id~ : String,
+  source~ : String,
+  target~ : String,
+) -> CorpusDocument {
+  { id, source, target, metadata: {} }
+}
+
+///|
+/// Add or replace a metadata field on a corpus document.
+pub fn CorpusDocument::with_metadata(
+  document : CorpusDocument,
+  key~ : String,
+  value~ : String,
+) -> CorpusDocument {
+  let metadata = document.metadata
+  metadata[key] = value
+  { ..document, metadata, }
+}
+
+///|
+/// Create a quality issue with optional unit locations.
+pub fn quality_issue(
+  code~ : String,
+  severity~ : String,
+  message~ : String,
+  source_unit? : Int,
+  target_unit? : Int,
+) -> QualityIssue {
+  { code, severity, message, source_unit, target_unit }
 }

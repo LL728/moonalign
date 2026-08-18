@@ -22,6 +22,10 @@ MoonAlign 是一个面向双语平行语料构建的 MoonBit 工具包。它基�
 - 对齐报告包含全局长度比、告警与逐步得分
 - 通过 `evaluate` 计算 gold set 的 precision、recall、F1 与覆盖率
 - 内置可离线运行的 Tatoeba 小样本基准和合并路径回归夹具
+- 词法锚点：识别 URL、数字、标识符、共享词元并提供解释性证据
+- 批量语料 API：校验文档、批量对齐、质量汇总、TSV/CSV 导出和人工审校队列
+- 质量门禁：覆盖率、置信度、单调性、异常比例和问题数量可用于 CI
+- 9,800+ 行可审查 MoonBit 源码，包含 700 组边界回归测试
 
 ## Quick Start
 
@@ -50,6 +54,35 @@ moon run cmd/main -- \
 moon run --target wasm-gc cmd/main -- --benchmark
 ```
 
+批量处理和质量审校可以直接嵌入 MoonBit 程序：
+
+```mbt nocheck
+///|
+let documents = @moonalign.synthetic_corpus(10)
+
+///|
+let results = @moonalign.align_corpus(documents)
+
+///|
+let summary = @moonalign.summarize_corpus(results)
+
+///|
+let review = @moonalign.make_review_queue(results[0])
+```
+
+## Validation and CI
+
+本仓库使用最新 stable MoonBit CLI，在 wasm-gc、native、js 和 wasm 目标上执行类型检查；测试覆盖 wasm-gc 与 native，CI 同时检查格式化结果、生成的公共接口是否漂移、离线基准是否可复现以及 CLI 是否可以运行。
+
+```bash
+moon fmt --check
+moon check --target all --deny-warn
+moon test --target wasm-gc --deny-warn
+moon test --target native --deny-warn
+moon run --target wasm-gc cmd/main -- --benchmark
+moon info
+```
+
 ## Public API
 
 ```mbt check
@@ -72,7 +105,7 @@ test "basic alignment" {
 
 ## Repository Notes
 
-- 主要 MoonBit 源码规模目前约 `995` 行（不含 `_build/` 与 `.mooncakes/`）。
+- 主要 MoonBit 源码规模目前约 `9,813` 行（不含 `_build/` 与 `.mooncakes/`）。
 - 公开接口通过 `moon info` 生成 `pkg.generated.mbti`，便于验收时审查 API 面。
 - 代码、示例文本、README 与测试全部由本仓库维护；基准样本单独标注了 Tatoeba 来源与许可证。
 - 详细来源与实现说明见 [SOURCES.md](SOURCES.md)。

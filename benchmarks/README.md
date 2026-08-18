@@ -26,3 +26,7 @@ and average dynamic-programming step score. The short Tatoeba sample is a
 deliberately difficult baseline for a length-only aligner: very short
 utterances and highly unequal translations expose where lexical anchors or a
 learned segment prior would be needed in a future milestone.
+
+The acceptance release additionally reports quality-gate inputs and review
+queue statistics through the public batch API. These values are derived from
+the same offline rows and are not hand-entered scores.

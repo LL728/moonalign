@@ -75,6 +75,14 @@ jobs:
         run: |
           moon test --target wasm-gc --deny-warn
 
+      - name: Native tests
+        run: |
+          moon test --target native --deny-warn
+
+      - name: All-backend build check
+        run: |
+          moon check --target all --deny-warn
+
       - name: Benchmark regression
         run: |
           moon run --target wasm-gc cmd/main -- --benchmark > benchmark.json
@@ -89,3 +97,7 @@ jobs:
       - name: CLI smoke test
         run: |
           moon run cmd/main -- --source-text "MoonAlign builds corpora." --target-text "MoonAlign 构建语料。" --format json
+
+      - name: Boundary suite count
+        run: |
+          test "$(grep -c '^test \"boundary regression' boundary_regression_test.mbt)" -ge 700

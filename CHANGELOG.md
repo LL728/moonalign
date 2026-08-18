@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0 - Acceptance release
+
+- Added deterministic lexical anchors for URLs, numbers, identifiers, and shared tokens.
+- Added corpus batch alignment, input validation, synthetic data generation, CSV/TSV export, and quality summaries.
+- Added confidence-based review queues and configurable quality gates for ingestion pipelines.
+- Added length distributions, paragraph histograms, repeated-unit detection, and text profiles.
+- Added 700 semantic boundary regression cases covering empty, Unicode, punctuation, whitespace, CRLF, URL, numeric, paragraph, and length-ratio inputs.
+- Updated CI for current stable MoonBit, all-backend checks, native tests, public API drift checks, benchmark regression, and CLI smoke testing.
+
 ## Unreleased
 
 - Added `AlignmentMetrics`, `GoldPair`, and `evaluate` for reproducible gold-set evaluation.

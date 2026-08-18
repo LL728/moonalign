@@ -6,13 +6,25 @@ import {
 }
 
 // Values
+pub fn accepted_documents(Array[CorpusResult], gate? : QualityGate) -> Array[CorpusResult]
+
 pub fn align(String, String, options? : AlignOptions) -> AlignmentReport
+
+pub fn align_corpus(Array[CorpusDocument], options? : AlignOptions) -> Array[CorpusResult]
+
+pub fn align_document(CorpusDocument, options? : AlignOptions) -> CorpusResult
 
 pub fn align_texts(String, String, options? : AlignOptions) -> AlignmentReport
 
 pub fn align_units(Array[TextUnit], Array[TextUnit], options? : AlignOptions) -> AlignmentReport
 
 pub fn align_with_mode(String, String, mode? : SegmentMode) -> AlignmentReport
+
+pub fn anchor_bonus(AlignmentPair, Array[LexicalAnchor]) -> Double
+
+pub fn anchor_kind_counts(Array[LexicalAnchor]) -> Map[String, Int]
+
+pub fn assess_quality(AlignmentReport, anchors? : Array[LexicalAnchor]) -> AlignmentQuality
 
 pub fn benchmark_case(BenchmarkCase) -> BenchmarkResult
 
@@ -22,25 +34,87 @@ pub fn benchmark_suite() -> Array[BenchmarkResult]
 
 pub fn benchmark_to_json_string(indent? : Int) -> String
 
+pub fn corpus_document(id~ : String, source~ : String, target~ : String) -> CorpusDocument
+
+pub fn corpus_quality_csv(Array[CorpusResult]) -> String
+
+pub fn corpus_to_tsv(Array[CorpusResult]) -> String
+
+pub fn default_anchor_options() -> AnchorOptions
+
 pub fn default_options() -> AlignOptions
+
+pub fn default_quality_gate() -> QualityGate
 
 pub fn evaluate(AlignmentReport, Array[GoldPair]) -> AlignmentMetrics
 
+pub fn extract_anchors(Array[TextUnit], options? : AnchorOptions) -> Array[LexicalAnchor]
+
 pub fn gold_pair(source_start~ : Int, source_end~ : Int, target_start~ : Int, target_end~ : Int) -> GoldPair
+
+pub fn length_ratio(Array[TextUnit], Array[TextUnit]) -> Double
+
+pub fn length_stats(Array[TextUnit]) -> LengthStats
+
+pub fn make_review_queue(CorpusResult) -> ReviewQueue
+
+pub fn make_review_queues(Array[CorpusResult]) -> Array[ReviewQueue]
+
+pub fn match_anchors(Array[TextUnit], Array[TextUnit], options? : AnchorOptions) -> Array[LexicalAnchor]
+
+pub fn move_kind_counts(Array[CorpusResult]) -> Map[String, Int]
 
 pub fn normalize_text(String) -> String
 
 pub fn options_to_json(AlignOptions) -> Json
 
+pub fn paragraph_histogram(Array[TextUnit]) -> Map[Int, Int]
+
 pub fn paragraph_mode() -> SegmentMode
+
+pub fn parse_corpus_tsv(String) -> Array[CorpusDocument]
+
+pub fn passes_quality_gate(AlignmentQuality, gate? : QualityGate) -> Bool
+
+pub fn pending_review_items(ReviewQueue) -> Array[ReviewItem]
+
+pub fn quality_issue(code~ : String, severity~ : String, message~ : String, source_unit? : Int, target_unit? : Int) -> QualityIssue
+
+pub fn quality_recommendations(AlignmentQuality) -> Array[String]
+
+pub fn quality_to_csv_row(String, AlignmentQuality) -> String
+
+pub fn repeated_units(Array[TextUnit]) -> Map[String, Int]
 
 pub fn report_to_json_string(AlignmentReport, indent? : Int) -> String
 
 pub fn report_to_tsv(AlignmentReport) -> String
 
+pub fn review_label_counts(Array[ReviewQueue]) -> Map[String, Int]
+
+pub fn review_queue(Array[CorpusResult]) -> Array[CorpusResult]
+
+pub fn review_queue_to_tsv(ReviewQueue) -> String
+
+pub fn review_summary(ReviewQueue) -> String
+
 pub fn segment_text(String, options? : AlignOptions) -> Array[TextUnit]
 
 pub fn sentence_mode() -> SegmentMode
+
+pub fn short_unit_indexes(Array[TextUnit], threshold? : Double) -> Array[Int]
+
+pub fn stats_to_csv_row(String, LengthStats) -> String
+
+pub fn summarize_corpus(Array[CorpusResult]) -> CorpusSummary
+
+pub fn synthetic_corpus(Int) -> Array[CorpusDocument]
+
+pub fn text_profile(String, options? : AlignOptions) -> String
+
+pub fn token_overlap(TextUnit, TextUnit) -> Double
+
+pub fn validate_corpus(Array[CorpusDocument]) -> Array[String]
 
 pub fn with_max_fan_out(AlignOptions, Int) -> AlignOptions
 
@@ -90,6 +164,21 @@ pub struct AlignmentPair {
   move_kind : String
 } derive(ToJson, @debug.Debug)
 
+pub struct AlignmentQuality {
+  source_units : Int
+  target_units : Int
+  aligned_pairs : Int
+  exact_one_to_one : Int
+  merged_pairs : Int
+  anchored_pairs : Int
+  source_coverage : Double
+  target_coverage : Double
+  mean_confidence : Double
+  monotonicity : Double
+  score : Double
+  issues : Array[QualityIssue]
+} derive(ToJson, @debug.Debug)
+
 pub struct AlignmentReport {
   options : Json
   source_count : Int
@@ -98,6 +187,15 @@ pub struct AlignmentReport {
   warnings : Array[String]
   pairs : Array[AlignmentPair]
 } derive(ToJson, @debug.Debug)
+
+pub struct AnchorOptions {
+  min_token_length : Int
+  include_numbers : Bool
+  include_urls : Bool
+  include_identifiers : Bool
+  case_sensitive : Bool
+  max_anchors_per_unit : Int
+} derive(@debug.Debug)
 
 type BackPointer derive(Eq, @debug.Debug)
 
@@ -116,12 +214,95 @@ pub struct BenchmarkResult {
   warnings : Array[String]
 } derive(ToJson, @debug.Debug)
 
+pub struct CorpusDocument {
+  id : String
+  source : String
+  target : String
+  metadata : Map[String, String]
+} derive(@debug.Debug)
+pub fn CorpusDocument::with_metadata(Self, key~ : String, value~ : String) -> Self
+
+pub struct CorpusResult {
+  id : String
+  report : AlignmentReport
+  quality : AlignmentQuality
+} derive(ToJson, @debug.Debug)
+
+pub struct CorpusSummary {
+  document_count : Int
+  total_source_units : Int
+  total_target_units : Int
+  total_pairs : Int
+  mean_f1 : Double
+  mean_quality_score : Double
+  warning_count : Int
+  issue_count : Int
+} derive(ToJson, @debug.Debug)
+
 pub struct GoldPair {
   source_start : Int
   source_end : Int
   target_start : Int
   target_end : Int
 } derive(Eq, ToJson, @debug.Debug)
+
+pub struct LengthStats {
+  count : Int
+  total : Double
+  minimum : Double
+  maximum : Double
+  mean : Double
+  median : Double
+  p90 : Double
+} derive(ToJson, @debug.Debug)
+
+pub struct LexicalAnchor {
+  source_unit : Int
+  target_unit : Int
+  source_text : String
+  target_text : String
+  normalized : String
+  kind : String
+  score : Double
+} derive(ToJson, @debug.Debug)
+
+pub struct QualityGate {
+  min_source_coverage : Double
+  min_target_coverage : Double
+  min_mean_confidence : Double
+  min_quality_score : Double
+  max_warning_count : Int
+} derive(@debug.Debug)
+
+pub struct QualityIssue {
+  code : String
+  severity : String
+  message : String
+  source_unit : Int?
+  target_unit : Int?
+} derive(ToJson, @debug.Debug)
+
+pub struct ReviewItem {
+  document_id : String
+  pair_index : Int
+  label : ReviewLabel
+  confidence : Double
+  reason : String
+  anchors : Int
+} derive(ToJson, @debug.Debug)
+
+pub enum ReviewLabel {
+  Accept
+  NeedsReview
+  Reject
+} derive(Eq, ToJson, @debug.Debug)
+
+pub struct ReviewQueue {
+  items : Array[ReviewItem]
+  accepted : Int
+  needs_review : Int
+  rejected : Int
+} derive(ToJson, @debug.Debug)
 
 pub enum SegmentMode {
   Paragraph
@@ -141,4 +322,3 @@ pub struct TextUnit {
 // Type aliases
 
 // Traits
-
