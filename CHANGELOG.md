@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+
+- Restructured the public README around installation, usage, architecture, benchmarks, testing, CI, and licensing.
+- Completed the Apache-2.0 copyright notice and refreshed package metadata for the documentation release.
+
 ## 0.2.0 - Acceptance release
 
 - Added deterministic lexical anchors for URLs, numbers, identifiers, and shared tokens.
